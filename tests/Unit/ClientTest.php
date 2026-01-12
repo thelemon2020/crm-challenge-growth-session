@@ -10,17 +10,15 @@ class ClientTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_active_clients_using_active_scope(): void
+    public function test_active_scope_only_returns_active_clients(): void
     {
-        Client::factory()->count(2)->create([
+        $inactiveClients = Client::factory()->count(2)->create([
             'status' => 'inactive'
         ]);
-        $activeClient = Client::factory()->create([
+        $activeClients = Client::factory()->count(2)->create([
             'status' => 'active'
         ]);
 
-        $activeClients = Client::active()->get();
-
-        $this->assertEquals($activeClient->id, $activeClients->first()->id);
+        $this->assertEquals($activeClients->pluck('id')->toArray(), Client::active()->pluck('id')->toArray());
     }
 }
