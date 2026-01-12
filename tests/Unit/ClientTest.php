@@ -21,4 +21,11 @@ class ClientTest extends TestCase
 
         $this->assertEquals($activeClients->pluck('id')->toArray(), Client::active()->pluck('id')->toArray());
     }
+
+    public function test_created_at_accessor_returns_formatted_date (): void
+    {
+        $client = Client::factory()->create(['created_at' => '1999-12-31']);
+
+        $this->assertEquals("12/31/1999", $client->created_at);
+    }
 }
