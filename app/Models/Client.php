@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\PrettyDateCast;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,6 +17,10 @@ class Client extends Model
     use Notifiable;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'created_at' => PrettyDateCast::class,
+    ];
 
     public function user(): BelongsTo
     {
@@ -32,12 +37,5 @@ class Client extends Model
     protected function inactive(Builder $query):void
     {
         $query->where('status','inactive');
-    }
-
-    protected function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn($value) => date('m/d/Y', strtotime($value)),
-        );
     }
 }
