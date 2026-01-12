@@ -26,4 +26,10 @@ class Client extends Model
     {
         $query->where('status','active');
     }
+
+    #[Scope]
+    protected function inactive(Builder $query):void
+    {
+        $query->where('status','inactive');
+    }
 }
