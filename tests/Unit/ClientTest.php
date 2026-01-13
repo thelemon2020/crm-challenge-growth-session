@@ -39,4 +39,18 @@ class ClientTest extends TestCase
 
         $this->assertCount($projectAmount, $client->projects);
     }
+
+    public function test_soft_deleted_clients_are_not_in_default_queries(): void
+    {
+        // Arrange
+        Client::factory()->count(4)->create();
+
+        // Act
+        Client::query()->delete();
+
+        // Assert
+        $this->assertCount(0, Client::all());
+        $this->assertDatabaseCount('clients', 4);
+        $this->assertCount(4, Client::withTrashed()->get());
+    }
 }
