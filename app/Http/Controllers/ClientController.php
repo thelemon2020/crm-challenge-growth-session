@@ -26,7 +26,8 @@ class ClientController extends Controller
         $data = $request->validated();
         Client::create($data);
 
-        return redirect()->route('clients.index');
+        return redirect()->route('clients.index')
+            ->with('success', 'Client created!');
     }
 
     public function show(Client $client)

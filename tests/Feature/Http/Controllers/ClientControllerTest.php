@@ -15,10 +15,13 @@ class ClientControllerTest extends TestCase
 
     public function test_index_returns_all_clients()
     {
+        // Arrange
         $clients = Client::factory(5)->create();
 
+        // Act
         $response = $this->get(route('clients.index'));
 
+        // Assert
         $response
             ->assertStatus(200)
             ->assertSeeInOrder([
@@ -28,11 +31,15 @@ class ClientControllerTest extends TestCase
 
     public function test_store_add_a_new_client()
     {
+        // Arrange
         $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
 
+        // Act
         $response = $this->post(route('clients.store'), $client);
 
+        // Assert
         $response->assertRedirect(route('clients.index'));
+        $response->assertSessionHas('success', 'Client created!');
         $this->assertDatabaseHas('clients', $client);
     }
 
