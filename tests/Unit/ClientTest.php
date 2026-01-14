@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Enums\StatusEnum;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,10 +15,10 @@ class ClientTest extends TestCase
     public function test_active_scope_only_returns_active_clients(): void
     {
         $inactiveClients = Client::factory()->count(2)->create([
-            'status' => 'inactive'
+            'status' => StatusEnum::Inactive
         ]);
         $activeClients = Client::factory()->count(2)->create([
-            'status' => 'active'
+            'status' => StatusEnum::Active
         ]);
 
         $this->assertEquals($activeClients->pluck('id')->toArray(), Client::active()->pluck('id')->toArray());
