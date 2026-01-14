@@ -16,8 +16,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('company');
-            $table->string('address');
+            $table->integer('phone')->nullable();
+            $table->string('company')->nullable();
+            $table->string('address')->nullable();
             $table->enum('status', collect(StatusEnum::cases())->map(fn ($status) => $status->value)->toArray());
             $table->softDeletes();
             $table->timestamps();

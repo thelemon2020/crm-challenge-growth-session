@@ -20,6 +20,7 @@ class ClientFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->phoneNumber(),
             'company' => fake()->company(),
             'address' => fake()->address(),
             'status' => fake()->randomElement(StatusEnum::cases())
