@@ -5,12 +5,12 @@ namespace Tests\Unit;
 use App\Enums\StatusEnum;
 use App\Models\Client;
 use App\Models\Project;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
 class ClientTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     public function test_active_scope_only_returns_active_clients(): void
     {

@@ -13,7 +13,6 @@ class ClientControllerTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-
     public function test_index_returns_all_clients()
     {
         $clients = Client::factory(5)->create();
