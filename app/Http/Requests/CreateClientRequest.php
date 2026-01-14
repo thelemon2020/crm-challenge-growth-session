@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateClientRequest extends FormRequest
 {
@@ -10,11 +12,11 @@ class CreateClientRequest extends FormRequest
     {
         return [
             'name' => ['required'],
-            'email' => ['required', 'email', 'max:254'],
+            'email' => ['required', 'email', 'max:254', 'unique:clients,email'],
             'phone' => ['required'],
             'company' => ['required'],
             'address' => ['required'],
-            'status' => ['required'],
+            'status' => ['required', Rule::enum(StatusEnum::class)],
             'deleted_at' => ['nullable', 'date'],
         ];
     }
