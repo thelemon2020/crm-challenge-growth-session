@@ -13,7 +13,7 @@ class ClientControllerTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_index_returns_all_clients()
+    public function test_can_list_all_clients()
     {
         // Arrange
         $clients = Client::factory(5)->create();
@@ -29,7 +29,7 @@ class ClientControllerTest extends TestCase
             ]);
     }
 
-    public function test_store_add_a_new_client()
+    public function test_can_create_client_with_valid_data()
     {
         // Arrange
         $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
@@ -44,7 +44,7 @@ class ClientControllerTest extends TestCase
     }
 
     #[dataProvider('invalidClientData')]
-    public function test_store_does_not_add_a_new_client_if_data_is_invalid(array $client)
+    public function test_cannot_create_client_with_invalid_data(array $client)
     {
         $client = [...$client, 'status' => StatusEnum::Inactive->value];
 
@@ -67,4 +67,11 @@ class ClientControllerTest extends TestCase
         ];
     }
 
+    //    test('can show single client with projects')
+    //    test('can update client')
+    //    test('can soft delete client')
+
+    // Authorisation/Permission test
+    //    test('admin can list all clients')
+    //    test('user cannot list clients without permission')
 }
