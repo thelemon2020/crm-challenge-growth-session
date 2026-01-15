@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Enums\StatusEnum;
 use App\Models\Client;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -72,7 +73,19 @@ class ClientControllerTest extends TestCase
 
     public function test_can_show_single_client_with_projects()
     {
-        $this->markTestSkipped();
+        $client = Client::factory()->has(Project::factory())->create();
+        $project = $client->projects->first();
+
+        $response = $this->get(route('clients.show', $client));
+
+        $response
+            ->assertStatus(200)
+            ->assertSeeInOrder([
+                $client->name,
+                $project->name,
+                $project->description,
+                $project->status,
+            ]);
     }
 
     public function test_can_update_client_with_valid_data()

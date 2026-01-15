@@ -32,6 +32,12 @@ class ClientController extends Controller
 
     public function show(Client $client)
     {
+        $projects = $client->projects()->get();
+
+        return view('clients.show', [
+            'client' => $client,
+            'projects' => $projects
+        ]);
     }
 
     public function edit(Client $client)
