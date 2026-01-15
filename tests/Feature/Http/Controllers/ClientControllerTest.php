@@ -46,10 +46,13 @@ class ClientControllerTest extends TestCase
     #[dataProvider('invalidClientData')]
     public function test_cannot_create_client_with_invalid_data(array $client)
     {
+        // Arrange
         $client = [...$client, 'status' => StatusEnum::Inactive->value];
 
+        // Act
         $response = $this->post(route('clients.store'), $client);
 
+        // Assert
         $response
             ->assertSessionHasErrors()
             ->assertRedirect();
@@ -67,11 +70,30 @@ class ClientControllerTest extends TestCase
         ];
     }
 
-    //    test('can show single client with projects')
-    //    test('can update client')
-    //    test('can soft delete client')
+    public function test_can_show_single_client_with_projects()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function test_can_update_client_with_valid_data()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function test_cannot_update_client_with_invalid_data()
+    {
+        $this->markTestSkipped();
+    }
+
 
     // Authorisation/Permission test
-    //    test('admin can list all clients')
-    //    test('user cannot list clients without permission')
+    public function test_admin_can_list_all_clients()
+    {
+        $this->markTestSkipped();
+    }
+
+    public function test_user_cannot_list_clients_without_permission()
+    {
+        $this->markTestSkipped();
+    }
 }
