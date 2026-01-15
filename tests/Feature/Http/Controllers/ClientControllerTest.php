@@ -90,7 +90,14 @@ class ClientControllerTest extends TestCase
 
     public function test_can_update_client_with_valid_data()
     {
-        $this->markTestSkipped();
+        $client = client::factory()->create();
+        $clientWithAura = client::factory()->raw(["name" => "Aura"]);
+
+        $clientWithAura = [...$clientWithAura, 'status' => StatusEnum::Active->value];
+
+        $response = $this->put(route('clients.update', $client), $clientWithAura);
+        $response->assertRedirect(route('clients.show', $client));
+        $this->assertDatabaseHas('clients', [...$clientWithAura, 'id' => $client->id]);
     }
 
     public function test_cannot_update_client_with_invalid_data()
