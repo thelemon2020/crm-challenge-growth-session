@@ -184,12 +184,12 @@ test('policy denies access return 403')
 ## 4. API Endpoints
 
 ### AC 4.1: Client API Endpoints
-- [ ] GET `/api/clients` - list clients (paginated, filterable by status)
-- [ ] GET `/api/clients/{client}` - show client with projects
-- [ ] POST `/api/clients` - create client
-- [ ] PUT `/api/clients/{client}` - update client
-- [ ] DELETE `/api/clients/{client}` - soft delete client
-- [ ] POST `/api/clients/{client}/media` - upload client documents
+- [X] GET `/api/clients` - list clients (paginated, filterable by status)
+- [X] GET `/api/clients/{client}` - show client with projects
+- [X] POST `/api/clients` - create client
+- [X] PUT `/api/clients/{client}` - update client
+- [] DELETE `/api/clients/{client}` - soft delete client
+- [] POST `/api/clients/{client}/media` - upload client documents
 - [ ] All endpoints use route model binding
 - [ ] All endpoints return `ClientResource`
 - [ ] All endpoints check policies

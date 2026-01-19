@@ -46,6 +46,51 @@ class ClientControllerTest extends TestCase
         ]);
     }
 
+    // Authorisation/Permission test
+    public function test_admin_can_list_all_clients()
+    {
+        // Arrange
+        $clients = Client::factory()->count(5)->create();
+        $admin = User::factory()->admin()->create();
+
+        // Act
+        $response = $this->actingAs($admin)->get(route('clients.index'));
+
+        // Assert
+        $response->assertStatus(200);
+        $response->assertSeeInOrder($clients->pluck('name')->toArray());
+    }
+
+    public function test_user_cannot_list_clients_without_permission()
+    {
+        // Arrange
+        Client::factory()->count(5)->create();
+        $user = User::factory()->user()->create();
+
+        // Act
+        $response = $this->actingAs($user)->get(route('clients.index'));
+
+        // Assert
+        $response->assertForbidden();
+    }
+
+    public function test_can_show_single_client_with_projects()
+    {
+        $client = Client::factory()->has(Project::factory())->create();
+        $project = $client->projects->first();
+
+        $response = $this->get(route('clients.show', $client));
+
+        $response
+            ->assertStatus(200)
+            ->assertSeeInOrder([
+                $client->name,
+                $project->name,
+                $project->description,
+                $project->status,
+            ]);
+    }
+
     public function test_can_create_client_with_valid_data()
     {
         // Arrange
@@ -85,23 +130,6 @@ class ClientControllerTest extends TestCase
             'missing company' => ['client' => Client::factory()->raw(["company" => ''])],
             'missing address' => ['client' => Client::factory()->raw(["address" => ''])],
         ];
-    }
-
-    public function test_can_show_single_client_with_projects()
-    {
-        $client = Client::factory()->has(Project::factory())->create();
-        $project = $client->projects->first();
-
-        $response = $this->get(route('clients.show', $client));
-
-        $response
-            ->assertStatus(200)
-            ->assertSeeInOrder([
-                $client->name,
-                $project->name,
-                $project->description,
-                $project->status,
-            ]);
     }
 
     public function test_can_update_client_with_valid_data()
@@ -163,32 +191,8 @@ class ClientControllerTest extends TestCase
         $this->assertDatabaseMissing('clients', ['id' => $currentClient->id, ...$clientUpdateData]);
     }
 
-
-    // Authorisation/Permission test
-    public function test_admin_can_list_all_clients()
+    public function test_can_soft_delete_client()
     {
-        // Arrange
-        $clients = Client::factory()->count(5)->create();
-        $admin = User::factory()->admin()->create();
-
-        // Act
-        $response = $this->actingAs($admin)->get(route('clients.index'));
-
-        // Assert
-        $response->assertStatus(200);
-        $response->assertSeeInOrder($clients->pluck('name')->toArray());
-    }
-
-    public function test_user_cannot_list_clients_without_permission()
-    {
-        // Arrange
-        Client::factory()->count(5)->create();
-        $user = User::factory()->user()->create();
-
-        // Act
-        $response = $this->actingAs($user)->get(route('clients.index'));
-
-        // Assert
-        $response->assertForbidden();
+        $this->markTestSkipped();
     }
 }
