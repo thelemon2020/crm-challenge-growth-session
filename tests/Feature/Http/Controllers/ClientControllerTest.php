@@ -148,7 +148,7 @@ class ClientControllerTest extends TestCase
     public function test_cannot_update_client_with_invalid_data(Client $clientUpdateData)
     {
         // Arrange
-        $currentClient = client::factory()->create();
+        $currentClient = Client::factory()->create();
 
         // Act
         $response = $this
@@ -175,7 +175,7 @@ class ClientControllerTest extends TestCase
     public function test_cannot_update_client_with_invalid_status()
     {
         // Arrange
-        $currentClient = client::factory()->create();
+        $currentClient = Client::factory()->create();
         $clientUpdateData = Client::factory()->raw();
         $clientUpdateData['status'] = 'invalid-status';
 
@@ -193,6 +193,12 @@ class ClientControllerTest extends TestCase
 
     public function test_can_soft_delete_client()
     {
-        $this->markTestSkipped();
+        $clients = Client::factory(3)->create();
+
+        $response = $this->delete(route('clients.destroy', $clients->first()));
+
+        $response->assertRedirect(route('clients.index'));
+        $this->assertDatabaseCount('clients', 3);
+        $this->assertCount(2, Client::all());
     }
 }
