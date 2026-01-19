@@ -74,23 +74,6 @@ class ClientControllerTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_can_show_single_client_with_projects()
-    {
-        $client = Client::factory()->has(Project::factory())->create();
-        $project = $client->projects->first();
-
-        $response = $this->get(route('clients.show', $client));
-
-        $response
-            ->assertStatus(200)
-            ->assertSeeInOrder([
-                $client->name,
-                $project->name,
-                $project->description,
-                $project->status,
-            ]);
-    }
-
     public function test_can_create_client_with_valid_data()
     {
         // Arrange
@@ -130,6 +113,23 @@ class ClientControllerTest extends TestCase
             'missing company' => ['client' => Client::factory()->raw(["company" => ''])],
             'missing address' => ['client' => Client::factory()->raw(["address" => ''])],
         ];
+    }
+
+    public function test_can_show_single_client_with_projects()
+    {
+        $client = Client::factory()->has(Project::factory())->create();
+        $project = $client->projects->first();
+
+        $response = $this->get(route('clients.show', $client));
+
+        $response
+            ->assertStatus(200)
+            ->assertSeeInOrder([
+                $client->name,
+                $project->name,
+                $project->description,
+                $project->status,
+            ]);
     }
 
     public function test_can_update_client_with_valid_data()
