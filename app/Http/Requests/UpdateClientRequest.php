@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\StatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateClientRequest extends FormRequest
@@ -23,6 +24,6 @@ class UpdateClientRequest extends FormRequest
 
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('manage clients');
     }
 }
