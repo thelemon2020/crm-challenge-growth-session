@@ -59,7 +59,7 @@ class ClientControllerTest extends TestCase
     public function test_list_clients_requires_authentication()
     {
         $this->get(route('clients.index'))
-            ->assertRedirect('/login');
+            ->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_list_clients_without_permission()
@@ -86,7 +86,7 @@ class ClientControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeInOrder($clients->pluck('name')->toArray());
         $response->assertInertia(fn(Assert $page) => $page
-            ->component('Dashboard')
+            ->component('Client/Index')
             ->has('clients', $clients->count()));
     }
 
@@ -97,7 +97,7 @@ class ClientControllerTest extends TestCase
         $response = $this->get(route('clients.create'));
 
         // Assert
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_show_create_client_page_without_permission()
@@ -130,7 +130,7 @@ class ClientControllerTest extends TestCase
         $response = $this->post(route('clients.store'), $client);
 
         // Assert
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_create_client_without_permission()
@@ -198,7 +198,7 @@ class ClientControllerTest extends TestCase
         $response = $this->get(route('clients.show', $client));
 
         // Assert
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_show_single_client_with_projects_without_permission()
@@ -260,7 +260,7 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response = $this->put(route('clients.update', $client), $clientWithAura);
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_update_client_without_permission()
@@ -349,7 +349,7 @@ class ClientControllerTest extends TestCase
         $response = $this->delete(route('clients.destroy', $clients->first()));
 
         // Assert
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_cannot_delete_client_without_permission()

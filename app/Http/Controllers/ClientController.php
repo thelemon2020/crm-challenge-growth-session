@@ -13,7 +13,7 @@ class ClientController extends Controller
     {
         $clients = Client::all();
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Client/Index', [
             'clients' => $clients
         ]);
     }
