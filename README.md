@@ -188,9 +188,9 @@ test('policy denies access return 403')
 - [X] GET `/api/clients/{client}` - show client with projects
 - [X] POST `/api/clients` - create client
 - [X] PUT `/api/clients/{client}` - update client
-- [] DELETE `/api/clients/{client}` - soft delete client
+- [X] DELETE `/api/clients/{client}` - soft delete client
 - [] POST `/api/clients/{client}/media` - upload client documents
-- [ ] All endpoints use route model binding
+- [X] All endpoints use route model binding
 - [ ] All endpoints return `ClientResource`
 - [ ] All endpoints check policies
 
