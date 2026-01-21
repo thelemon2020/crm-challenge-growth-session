@@ -55,10 +55,23 @@ class ClientControllerTest extends TestCase
         $this->admin = User::factory()->admin()->create();
     }
 
+    // INDEX
     public function test_list_clients_requires_authentication()
     {
         $this->get(route('clients.index'))
             ->assertRedirect('/login');
+    }
+
+    public function test_user_cannot_list_clients_without_permission()
+    {
+        // Arrange
+        Client::factory()->count(5)->create();
+
+        // Act
+        $response = $this->actingAs($this->user)->get(route('clients.index'));
+
+        // Assert
+        $response->assertForbidden();
     }
 
     public function test_admin_can_list_all_clients()
@@ -77,18 +90,7 @@ class ClientControllerTest extends TestCase
             ->has('clients', $clients->count()));
     }
 
-    public function test_user_cannot_list_clients_without_permission()
-    {
-        // Arrange
-        Client::factory()->count(5)->create();
-
-        // Act
-        $response = $this->actingAs($this->user)->get(route('clients.index'));
-
-        // Assert
-        $response->assertForbidden();
-    }
-
+    // CREATE
     public function test_show_create_client_page_requires_authentication()
     {
         // Act
@@ -96,6 +98,15 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response->assertRedirect('/login');
+    }
+
+    public function test_user_cannot_show_create_client_page_without_permission()
+    {
+        // Act
+        $response = $this->actingAs($this->user)->get(route('clients.create'));
+
+        // Assert
+        $response->assertForbidden();
     }
 
     public function test_admin_can_show_create_client_page()
@@ -109,15 +120,7 @@ class ClientControllerTest extends TestCase
                 ->component('Create'));
     }
 
-    public function test_user_cannot_show_create_client_page_without_permission()
-    {
-        // Act
-        $response = $this->actingAs($this->user)->get(route('clients.create'));
-
-        // Assert
-        $response->assertForbidden();
-    }
-
+    // STORE
     public function test_create_client_requires_authentication()
     {
         // Arrange
@@ -128,6 +131,18 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response->assertRedirect('/login');
+    }
+
+    public function test_user_cannot_create_client_without_permission()
+    {
+        // Arrange
+        $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
+
+        // Act
+        $response = $this->actingAs($this->user)->post(route('clients.store'), $client);
+
+        // Assert
+        $response->assertForbidden();
     }
 
     public function test_admin_can_create_client_with_valid_data()
@@ -143,18 +158,6 @@ class ClientControllerTest extends TestCase
         $response->assertRedirect(route('clients.index'));
         $response->assertSessionHas('success', 'Client created!');
         $this->assertDatabaseHas('clients', $client);
-    }
-
-    public function test_user_cannot_create_client_without_permission()
-    {
-        // Arrange
-        $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
-
-        // Act
-        $response = $this->actingAs($this->user)->post(route('clients.store'), $client);
-
-        // Assert
-        $response->assertForbidden();
     }
 
     #[dataProvider('invalidClientData')]
@@ -185,6 +188,7 @@ class ClientControllerTest extends TestCase
         ];
     }
 
+    // SHOW
     public function test_show_single_client_with_projects_requires_authentication()
     {
         // Arrange
@@ -195,6 +199,19 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response->assertRedirect('/login');
+    }
+
+    public function test_user_cannot_show_single_client_with_projects_without_permission()
+    {
+        // Arrange
+        $client = Client::factory()->has(Project::factory())->create();
+        $client->projects->first();
+
+        // Act
+        $response = $this->actingAs($this->user)->get(route('clients.show', $client));
+
+        // Assert
+        $response->assertForbidden();
     }
 
     public function test_admin_can_show_single_client_with_projects()
@@ -217,19 +234,6 @@ class ClientControllerTest extends TestCase
             ]);
     }
 
-    public function test_user_cannot_show_single_client_with_projects_without_permission()
-    {
-        // Arrange
-        $client = Client::factory()->has(Project::factory())->create();
-        $client->projects->first();
-
-        // Act
-        $response = $this->actingAs($this->user)->get(route('clients.show', $client));
-
-        // Assert
-        $response->assertForbidden();
-    }
-
     public function test_admin_cannot_show_client_that_doesnt_exist()
     {
         // Arrange
@@ -244,6 +248,7 @@ class ClientControllerTest extends TestCase
         $response->assertNotFound();
     }
 
+    // UPDATE
     public function test_update_client_requires_authentication()
     {
         // Arrange
@@ -256,21 +261,6 @@ class ClientControllerTest extends TestCase
         // Assert
         $response = $this->put(route('clients.update', $client), $clientWithAura);
         $response->assertRedirect('/login');
-    }
-
-    public function test_admin_can_update_client_with_valid_data()
-    {
-        // Arrange
-        $client = client::factory()->create();
-        $clientWithAura = client::factory()->raw(["name" => "Aura"]);
-
-        // Act
-        $clientWithAura['status'] = StatusEnum::Active->value;
-
-        // Assert
-        $response = $this->actingAs($this->admin)->put(route('clients.update', $client), $clientWithAura);
-        $response->assertRedirect(route('clients.show', $client));
-        $this->assertDatabaseHas('clients', [...$clientWithAura, 'id' => $client->id]);
     }
 
     public function test_user_cannot_update_client_without_permission()
@@ -287,6 +277,20 @@ class ClientControllerTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_admin_can_update_client_with_valid_data()
+    {
+        // Arrange
+        $client = client::factory()->create();
+        $clientWithAura = client::factory()->raw(["name" => "Aura"]);
+
+        // Act
+        $clientWithAura['status'] = StatusEnum::Active->value;
+
+        // Assert
+        $response = $this->actingAs($this->admin)->put(route('clients.update', $client), $clientWithAura);
+        $response->assertRedirect(route('clients.show', $client));
+        $this->assertDatabaseHas('clients', [...$clientWithAura, 'id' => $client->id]);
+    }
 
     #[dataProvider('invalidClientUpdateData')]
     public function test_cannot_update_client_with_invalid_data(Client $clientUpdateData)
@@ -335,6 +339,7 @@ class ClientControllerTest extends TestCase
         $this->assertDatabaseMissing('clients', ['id' => $currentClient->id, ...$clientUpdateData]);
     }
 
+    // DESTROY
     public function test_delete_client_requires_authentication()
     {
         // Arrange
@@ -345,6 +350,18 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response->assertRedirect('/login');
+    }
+
+    public function test_user_cannot_delete_client_without_permission()
+    {
+        // Arrange
+        $clients = Client::factory(3)->create();
+
+        // Act
+        $response = $this->actingAs($this->user)->delete(route('clients.destroy', $clients->first()));
+
+        // Assert
+        $response->assertForbidden();
     }
 
     public function test_admin_can_soft_delete_client()
@@ -359,17 +376,5 @@ class ClientControllerTest extends TestCase
         $response->assertRedirect(route('clients.index'));
         $this->assertDatabaseCount('clients', 3);
         $this->assertCount(2, Client::all());
-    }
-
-    public function test_user_cannot_delete_client_without_permission()
-    {
-        // Arrange
-        $clients = Client::factory(3)->create();
-
-        // Act
-        $response = $this->actingAs($this->user)->delete(route('clients.destroy', $clients->first()));
-
-        // Assert
-        $response->assertForbidden();
     }
 }
