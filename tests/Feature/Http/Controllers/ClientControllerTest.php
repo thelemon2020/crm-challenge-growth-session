@@ -98,7 +98,6 @@ class ClientControllerTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    // Todo: admin and user
     public function test_admin_can_show_create_client_page()
     {
         // Act
