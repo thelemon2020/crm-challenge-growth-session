@@ -44,6 +44,9 @@ class ClientController extends Controller
 
     public function edit(Client $client)
     {
+        return Inertia::render('Client/Edit', [
+            'client' => $client
+        ]);
     }
 
     public function update(UpdateClientRequest $request, Client $client)

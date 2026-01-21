@@ -248,6 +248,52 @@ class ClientControllerTest extends TestCase
         $response->assertNotFound();
     }
 
+    // EDIT
+    // success, fail
+    public function test_show_edit_client_page_requires_authentication()
+    {
+        // Arrange
+        $client = Client::factory()->create();
+
+        // Act
+        $response = $this->get(route('clients.edit', $client));
+
+        // Assert
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_user_cannot_access_edit_client_page_without_permission()
+    {
+        // Arrange
+        $client = Client::factory()->create();
+
+        // Act
+        $response = $this->actingAs($this->user)->get(route('clients.edit', $client));
+
+        // Assert
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_access_edit_client_page()
+    {
+        // Arrange
+        $client = Client::factory()->create();
+
+        // Act
+        $response = $this->actingAs($this->admin)->get(route('clients.edit', $client));
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Client/Edit')
+                ->has('client', fn (Assert $page) => $page
+                    ->where('id', $client->id)
+                    ->etc()
+                )
+            );
+    }
+
+
     // UPDATE
     public function test_update_client_requires_authentication()
     {
