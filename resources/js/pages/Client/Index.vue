@@ -7,7 +7,7 @@
         >
             <div class="card">
                 <DataTable
-                    :value="clients"
+                    :value="clients.data"
                     :dt="{
                         headerCell: {
                             background: '{surface.800}',
@@ -69,6 +69,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
+import { Client } from '@/interfaces/Client';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,5 +78,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-defineProps({ clients: Array });
+interface ClientIndexProps {
+    clients: {
+        data: Client[]
+    }
+}
+
+defineProps<ClientIndexProps>();
 </script>
