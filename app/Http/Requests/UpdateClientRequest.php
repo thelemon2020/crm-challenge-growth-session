@@ -11,9 +11,11 @@ class UpdateClientRequest extends FormRequest
 {
     public function rules(): array
     {
+        $client = $this->route('client');
+
         return [
             'name' => ['required'],
-            'email' => ['required', 'email', 'max:254', 'unique:clients,email'],
+            'email' => ['required', 'email', 'max:254', Rule::unique('clients')->ignore($client)],
             'phone' => ['required'],
             'company' => ['required'],
             'address' => ['required'],

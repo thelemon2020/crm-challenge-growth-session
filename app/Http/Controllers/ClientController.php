@@ -33,16 +33,6 @@ class ClientController extends Controller
             ->with('success', 'Client created!');
     }
 
-    public function show(Client $client)
-    {
-        $projects = $client->projects()->get();
-
-        return view('clients.show', [
-            'client' => $client,
-            'projects' => $projects
-        ]);
-    }
-
     public function edit(Client $client)
     {
         return Inertia::render('Client/Edit', [
@@ -54,7 +44,7 @@ class ClientController extends Controller
     {
         $client->update($request->validated());
 
-        return redirect()->route('clients.show', $client)
+        return redirect()->route('clients.index', $client)
             ->with('success', 'Client updated successfully');
     }
 

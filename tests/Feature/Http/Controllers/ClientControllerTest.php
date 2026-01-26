@@ -188,66 +188,6 @@ class ClientControllerTest extends TestCase
         ];
     }
 
-    // SHOW
-    public function test_show_single_client_with_projects_requires_authentication()
-    {
-        // Arrange
-        $client = Client::factory()->has(Project::factory())->create();
-
-        // Act
-        $response = $this->get(route('clients.show', $client));
-
-        // Assert
-        $response->assertRedirect(route('login'));
-    }
-
-    public function test_user_cannot_show_single_client_with_projects_without_permission()
-    {
-        // Arrange
-        $client = Client::factory()->has(Project::factory())->create();
-        $client->projects->first();
-
-        // Act
-        $response = $this->actingAs($this->user)->get(route('clients.show', $client));
-
-        // Assert
-        $response->assertForbidden();
-    }
-
-    public function test_admin_can_show_single_client_with_projects()
-    {
-        // Arrange
-        $client = Client::factory()->has(Project::factory())->create();
-        $project = $client->projects->first();
-
-        // Act
-        $response = $this->actingAs($this->admin)->get(route('clients.show', $client));
-
-        // Assert
-        $response
-            ->assertStatus(200)
-            ->assertSeeInOrder([
-                $client->name,
-                $project->name,
-                $project->description,
-                $project->status,
-            ]);
-    }
-
-    public function test_admin_cannot_show_client_that_doesnt_exist()
-    {
-        // Arrange
-        $client = Client::factory()->has(Project::factory())->create();
-        $project = $client->projects->first();
-        $invalidId = -1;
-
-        // Act
-        $response = $this->actingAs($this->admin)->get(route('clients.show', $invalidId));
-
-        // Assert
-        $response->assertNotFound();
-    }
-
     // EDIT
     // success, fail
     public function test_show_edit_client_page_requires_authentication()
@@ -334,7 +274,7 @@ class ClientControllerTest extends TestCase
 
         // Assert
         $response = $this->actingAs($this->admin)->put(route('clients.update', $client), $clientWithAura);
-        $response->assertRedirect(route('clients.show', $client));
+        $response->assertRedirect(route('clients.index', $client));
         $this->assertDatabaseHas('clients', [...$clientWithAura, 'id' => $client->id]);
     }
 
