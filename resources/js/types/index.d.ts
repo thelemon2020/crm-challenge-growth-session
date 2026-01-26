@@ -45,5 +45,6 @@ export interface Client {
     phone: string;
     company: string;
     address: string;
+    status: 'active' | 'inactive';
 }
 

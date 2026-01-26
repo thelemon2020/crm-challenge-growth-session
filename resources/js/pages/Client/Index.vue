@@ -1,3 +1,44 @@
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
+import { index, create, edit, destroy } from '@/routes/clients';
+import { type BreadcrumbItem, Client } from '@/types';
+import { Form, Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: dashboard().url,
+    },
+    {
+        title: 'Clients',
+        href: index().url,
+    },
+];
+
+interface ClientIndexProps {
+    clients: {
+        data: Client[];
+    };
+}
+
+defineProps<ClientIndexProps>();
+
+const createClientRoute = computed(() => {
+    return create().url;
+});
+
+function getStatusTagSeverity(status: "active" | "inactive") {
+    const tagSeverityMapping = {
+        "active": "success",
+        "inactive": "warn",
+    }
+
+    return tagSeverityMapping[status];
+}
+</script>
+
 <template>
     <Head title="Dashboard" />
 
@@ -5,7 +46,15 @@
         <div
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
-            <div class="card">
+            <div class="card grid gap-4">
+                <Button
+                    as="a"
+                    :href="createClientRoute"
+                    class="w-fit"
+                    label="Add Client"
+                    icon="pi pi-plus"
+                />
+
                 <DataTable
                     :value="clients.data"
                     :dt="{
@@ -15,17 +64,7 @@
                         },
                     }"
                 >
-                    <Column
-                        field="name"
-                        header="Name"
-                        :sortable="true"
-                    >
-                        <template #body="slotProps">
-                            <Link :href="show(slotProps.data.id)">
-                                {{ slotProps.data.name }}
-                            </Link>
-                        </template>
-                    </Column>
+                    <Column field="name" header="Name" :sortable="true" />
                     <Column
                         field="email"
                         header="Email"
@@ -35,7 +74,11 @@
                         field="status"
                         header="Status"
                         :sortable="true"
-                    ></Column>
+                    >
+                        <template #body="slotProps">
+                            <Tag :value="slotProps.data.status" :severity="getStatusTagSeverity(slotProps.data.status)" />
+                        </template>
+                    </Column>
                     <Column
                         field="company"
                         header="Company"
@@ -52,15 +95,24 @@
                         :sortable="true"
                     ></Column>
                     <Column header="Actions">
-                        <template #body>
+                        <template #body="slotProps">
                             <div class="flex gap-1">
-                                <Button label="Edit" size="small" raised />
                                 <Button
-                                    label="Delete"
+                                    as="a"
+                                    :href="edit(slotProps.data.id).url"
+                                    label="Edit"
                                     size="small"
-                                    severity="secondary"
                                     raised
                                 />
+                                <Form :action="destroy(slotProps.data.id)">
+                                    <Button
+                                        type="submit"
+                                        label="Delete"
+                                        size="small"
+                                        severity="secondary"
+                                        raised
+                                    />
+                                </Form>
                             </div>
                         </template>
                     </Column>
@@ -69,26 +121,3 @@
         </div>
     </AppLayout>
 </template>
-
-<script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { dashboard } from '@/routes';
-import { type BreadcrumbItem, Client } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
-import { show } from "@/actions/App/Http/Controllers/ClientController";
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard().url,
-    },
-];
-
-interface ClientIndexProps {
-    clients: {
-        data: Client[];
-    };
-}
-
-defineProps<ClientIndexProps>();
-</script>
