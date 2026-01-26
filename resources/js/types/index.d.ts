@@ -37,3 +37,13 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+export interface Client {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    address: string;
+}
+
