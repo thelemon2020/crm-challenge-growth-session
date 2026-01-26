@@ -19,7 +19,13 @@
                         field="name"
                         header="Name"
                         :sortable="true"
-                    ></Column>
+                    >
+                        <template #body="slotProps">
+                            <Link :href="show(slotProps.data.id)">
+                                {{ slotProps.data.name }}
+                            </Link>
+                        </template>
+                    </Column>
                     <Column
                         field="email"
                         header="Email"
@@ -67,9 +73,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import { Client } from '@/interfaces/Client';
+import { type BreadcrumbItem, Client } from '@/types';
+import { Head, Link } from '@inertiajs/vue3';
+import { show } from "@/actions/App/Http/Controllers/ClientController";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -80,8 +86,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface ClientIndexProps {
     clients: {
-        data: Client[]
-    }
+        data: Client[];
+    };
 }
 
 defineProps<ClientIndexProps>();
