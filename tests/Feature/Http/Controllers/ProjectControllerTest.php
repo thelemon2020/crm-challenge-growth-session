@@ -85,14 +85,33 @@ class ProjectControllerTest extends TestCase
 
     public function test_user_only_view_own_projects()
     {
-        $this->markTestSkipped();
+        // Arrange
+        $userProjects = Project::factory()->count(10)->create([
+            'user_id' => $this->user->id
+        ]);
+        $otherProjects = Project::factory()->count(10)->create();
+
+        // Act
+        $response = $this->actingAs($this->user)->get(route('projects.index'));
+
+        // Assert
+        $response->assertStatus(200);
+        $response->assertSeeInOrder($userProjects->pluck('id')->toArray());
+        $response->assertInertia(fn ($page) => $page
+            ->component('Projects/Index')
+            ->has('projects.data', $userProjects->count())
+        );
     }
 
 
     // CREATE
     public function test_show_create_project_page_requires_authentication()
     {
-        $this->markTestSkipped();
+        // Act
+        $response = $this->get(route('projects.create'));
+
+        // Assert
+        $response->assertRedirect(route('login'));
     }
 
     public function test_user_can_show_create_project_page()

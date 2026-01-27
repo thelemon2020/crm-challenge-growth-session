@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Client;
+use App\Models\Project;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,14 +16,25 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolePermissionSeeder::class);
 
-        $user = User::factory()->create([
+        $user1 = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
         ]);
+        $user2 = User::factory()->create([
+            'name' => 'Test User2',
+            'email' => 'test2@example.com',
+            'password' => Hash::make('password'),
+        ]);
 
-        $user->assignRole('admin');
+        $user1->assignRole('admin');
+        $user2->assignRole('user');
 
-        Client::factory()->count(5)->create();
+        Project::factory()->count(10)->create([
+            'user_id' => $user1->id,
+        ]);
+        Project::factory()->count(5)->create([
+            'user_id' => $user2->id,
+        ]);
     }
 }

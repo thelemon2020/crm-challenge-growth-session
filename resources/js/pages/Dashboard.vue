@@ -13,6 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 defineProps({
     clientAmount: Number,
+    projectAmount: Number,
 });
 </script>
 
@@ -28,6 +29,15 @@ defineProps({
                 <template #content>
                     <p class="m-0">
                         <span class="text-2xl">{{ clientAmount }}</span>
+                    </p>
+                </template>
+            </Card>
+
+            <Card>
+                <template #title><span class="text-base">Total Projects</span></template>
+                <template #content>
+                    <p class="m-0">
+                        <span class="text-2xl">{{ projectAmount }}</span>
                     </p>
                 </template>
             </Card>

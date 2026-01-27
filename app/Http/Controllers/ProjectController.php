@@ -11,7 +11,13 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::all();
+        $projects = null;
+
+        if (auth()->user()->can('manage projects')) {
+            $projects = Project::all();
+        } else if (auth()->user()->can('view own projects')) {
+            $projects = Project::where('user_id', auth()->id())->get();
+        }
 
         return Inertia::render('Projects/Index', [
             'projects' => ProjectResource::collection($projects)

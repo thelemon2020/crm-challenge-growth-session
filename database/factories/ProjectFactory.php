@@ -17,7 +17,7 @@ class ProjectFactory extends Factory
         return [
             'client_id' => Client::factory(),
             'user_id' => User::factory(),
-            'title' => $this->faker->name(),
+            'title' => $this->faker->words(3, true),
             'description' => $this->faker->text(),
             'status' => 'open',
             'deadline' => $this->faker->dateTimeBetween('+1 week', '+1 month'),

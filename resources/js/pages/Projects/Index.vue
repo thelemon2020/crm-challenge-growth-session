@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Form, Head } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,16 +21,8 @@ interface ProjectIndexProps {
     };
 }
 
-defineProps<ProjectIndexProps>();
-
-function getStatusTagSeverity(status: "active" | "inactive") {
-    const tagSeverityMapping = {
-        "active": "success",
-        "inactive": "warn",
-    }
-
-    return tagSeverityMapping[status];
-}
+const props = defineProps<ProjectIndexProps>();
+console.log(props.projects);
 </script>
 
 <template>
@@ -45,11 +37,12 @@ function getStatusTagSeverity(status: "active" | "inactive") {
                     as="a"
                     href="#"
                     class="w-fit"
-                    label="Add Client"
+                    label="Add Project"
                     icon="pi pi-plus"
                 />
 
                 <DataTable
+                    :value="projects.data"
                     :dt="{
                         headerCell: {
                             background: '{surface.800}',
@@ -57,58 +50,12 @@ function getStatusTagSeverity(status: "active" | "inactive") {
                         },
                     }"
                 >
-                    <Column field="name" header="Name" :sortable="true" />
+                    <Column field="title" header="Title" :sortable="true" />
                     <Column
-                        field="email"
-                        header="Email"
+                        field="description"
+                        header="Description"
                         :sortable="true"
                     ></Column>
-                    <Column
-                        field="status"
-                        header="Status"
-                        :sortable="true"
-                    >
-                        <template #body="slotProps">
-                            <Tag :value="slotProps.data.status" :severity="getStatusTagSeverity(slotProps.data.status)" />
-                        </template>
-                    </Column>
-                    <Column
-                        field="company"
-                        header="Company"
-                        :sortable="true"
-                    ></Column>
-                    <Column
-                        field="address"
-                        header="Address"
-                        :sortable="true"
-                    ></Column>
-                    <Column
-                        field="phone"
-                        header="Phone"
-                        :sortable="true"
-                    ></Column>
-                    <Column header="Actions">
-                        <template #body>
-                            <div class="flex gap-1">
-                                <Button
-                                    as="a"
-                                    href="#"
-                                    label="Edit"
-                                    size="small"
-                                    raised
-                                />
-                                <Form>
-                                    <Button
-                                        type="submit"
-                                        label="Delete"
-                                        size="small"
-                                        severity="secondary"
-                                        raised
-                                    />
-                                </Form>
-                            </div>
-                        </template>
-                    </Column>
                 </DataTable>
             </div>
         </div>
