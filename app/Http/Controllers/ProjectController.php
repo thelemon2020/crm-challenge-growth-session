@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatusEnum;
 use App\Http\Requests\CreateProjectRequest;
+use App\Http\Resources\ClientResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserResource;
+use App\Models\Client;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -27,7 +32,16 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return Inertia::render('Project/Create');
+        $isAdmin = auth()->user()->can('manage projects');
+
+        $users = UserResource::collection(User::all());
+        $clients = $isAdmin ? ClientResource::collection(Client::all()) : ClientResource::collection(Client::where('user_id', auth()->id())->get());
+
+        return Inertia::render('Project/Create', [
+            'users' => $users,
+            'clients' => $clients,
+            'status' => ProjectStatusEnum::cases()
+        ]);
     }
 
     public function store(CreateProjectRequest $request)
