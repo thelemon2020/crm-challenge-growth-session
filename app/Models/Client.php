@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Casts\PrettyDateCast;
-use App\Enums\StatusEnum;
+use App\Enums\ClientStatusEnum;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +23,7 @@ class Client extends Model
 
     protected $casts = [
         'created_at' => PrettyDateCast::class,
-        'status' => StatusEnum::class
+        'status' => ClientStatusEnum::class
     ];
 
     public function user(): BelongsTo

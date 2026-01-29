@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\StatusEnum;
+use App\Enums\ClientStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,7 +23,7 @@ class ClientFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'company' => fake()->company(),
             'address' => fake()->address(),
-            'status' => fake()->randomElement(StatusEnum::cases())
+            'status' => fake()->randomElement(ClientStatusEnum::cases())
         ];
     }
 }

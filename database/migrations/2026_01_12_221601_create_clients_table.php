@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\StatusEnum;
+use App\Enums\ClientStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('phone');
             $table->string('company');
             $table->string('address');
-            $table->enum('status', collect(StatusEnum::cases())->map(fn ($status) => $status->value)->toArray());
+            $table->string('status')->default(ClientStatusEnum::Inactive->value);
             $table->softDeletes();
             $table->timestamps();
         });

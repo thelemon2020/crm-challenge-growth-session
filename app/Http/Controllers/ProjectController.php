@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -29,18 +30,23 @@ class ProjectController extends Controller
         return Inertia::render('Project/Create');
     }
 
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        $data = $request->validate([
+        Project::create($request->validated());
 
-        ]);
-
-        return Project::create($data);
+        return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
 
     public function show(Project $project)
     {
         return $project;
+    }
+
+    public function edit(Project $project)
+    {
+        return Inertia::render('Project/Edit', [
+            'project' => new ProjectResource($project)
+        ]);
     }
 
     public function update(Request $request, Project $project)

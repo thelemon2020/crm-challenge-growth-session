@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProjectStatusEnum;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
@@ -19,7 +20,7 @@ class ProjectFactory extends Factory
             'user_id' => User::factory(),
             'title' => $this->faker->words(3, true),
             'description' => $this->faker->text(),
-            'status' => 'open',
+            'status' => ProjectStatusEnum::Pending->value,
             'deadline' => $this->faker->dateTimeBetween('+1 week', '+1 month'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
+import ProjectController from '@/actions/App/Http/Controllers/ProjectController';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,14 +16,14 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+// Todo: add type for project
 interface ProjectIndexProps {
     projects: {
         data: any[];
     };
 }
 
-const props = defineProps<ProjectIndexProps>();
-console.log(props.projects);
+defineProps<ProjectIndexProps>();
 </script>
 
 <template>
@@ -35,7 +36,7 @@ console.log(props.projects);
             <div class="card grid gap-4">
                 <Button
                     as="a"
-                    href="#"
+                    :href="ProjectController.create().url"
                     class="w-fit"
                     label="Add Project"
                     icon="pi pi-plus"

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\StatusEnum;
+use App\Enums\ClientStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -19,7 +19,7 @@ class UpdateClientRequest extends FormRequest
             'phone' => ['required'],
             'company' => ['required'],
             'address' => ['required'],
-            'status' => ['required', Rule::enum(StatusEnum::class)],
+            'status' => ['required', Rule::enum(ClientStatusEnum::class)],
             'deleted_at' => ['nullable', 'date'],
         ];
     }

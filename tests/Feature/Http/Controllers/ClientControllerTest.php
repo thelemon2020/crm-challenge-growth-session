@@ -3,7 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 
-use App\Enums\StatusEnum;
+use App\Enums\ClientStatusEnum;
 use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
@@ -124,7 +124,7 @@ class ClientControllerTest extends TestCase
     public function test_create_client_requires_authentication()
     {
         // Arrange
-        $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
+        $client = Client::factory()->raw(["status" => ClientStatusEnum::Inactive->value]);
 
         // Act
         $response = $this->post(route('clients.store'), $client);
@@ -136,7 +136,7 @@ class ClientControllerTest extends TestCase
     public function test_user_cannot_create_client_without_permission()
     {
         // Arrange
-        $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
+        $client = Client::factory()->raw(["status" => ClientStatusEnum::Inactive->value]);
 
         // Act
         $response = $this->actingAs($this->user)->post(route('clients.store'), $client);
@@ -148,7 +148,7 @@ class ClientControllerTest extends TestCase
     public function test_admin_can_create_client_with_valid_data()
     {
         // Arrange
-        $client = Client::factory()->raw(["status" => StatusEnum::Inactive->value]);
+        $client = Client::factory()->raw(["status" => ClientStatusEnum::Inactive->value]);
 
         // Act
         $response = $this->actingAs($this->admin)
@@ -164,7 +164,7 @@ class ClientControllerTest extends TestCase
     public function test_admin_cannot_create_client_with_invalid_data(array $client)
     {
         // Arrange
-        $client['status'] = StatusEnum::Inactive->value;
+        $client['status'] = ClientStatusEnum::Inactive->value;
 
         // Act
         $response = $this->actingAs($this->admin)
@@ -241,7 +241,7 @@ class ClientControllerTest extends TestCase
         $clientWithAura = client::factory()->raw(["name" => "Aura"]);
 
         // Act
-        $clientWithAura['status'] = StatusEnum::Active->value;
+        $clientWithAura['status'] = ClientStatusEnum::Active->value;
 
         // Assert
         $response = $this->put(route('clients.update', $client), $clientWithAura);
@@ -255,7 +255,7 @@ class ClientControllerTest extends TestCase
         $clientWithAura = client::factory()->raw(["name" => "Aura"]);
 
         // Act
-        $clientWithAura['status'] = StatusEnum::Active->value;
+        $clientWithAura['status'] = ClientStatusEnum::Active->value;
 
         // Assert
         $response = $this->actingAs($this->user)->put(route('clients.update', $client), $clientWithAura);
@@ -269,7 +269,7 @@ class ClientControllerTest extends TestCase
         $clientWithAura = client::factory()->raw(["name" => "Aura"]);
 
         // Act
-        $clientWithAura['status'] = StatusEnum::Active->value;
+        $clientWithAura['status'] = ClientStatusEnum::Active->value;
 
         // Assert
         $response = $this->actingAs($this->admin)->put(route('clients.update', $client), $clientWithAura);

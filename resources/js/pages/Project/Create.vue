@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import ClientController from '@/actions/App/Http/Controllers/ClientController';
+import ProjectController from '@/actions/App/Http/Controllers/ProjectController';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { index } from '@/routes/clients';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, Client, User } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -13,8 +12,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
     {
-        title: 'Clients',
-        href: index().url,
+        title: 'Projects',
+        href: ProjectController.index().url,
     },
     {
         title: 'Create',
@@ -22,18 +21,19 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface ProjectCreateProps {
+    users: {
+        data: User[];
+    };
+    clients: {
+        data: Client[];
+    };
+}
+
+defineProps<ProjectCreateProps>();
+
 const isActive = ref(false);
-
-const formFields = ref([
-    { id: 'name', label: 'Name', inputType: 'text' },
-    { id: 'email', label: 'Email', inputType: 'email' },
-    { id: 'phone', label: 'Phone', inputType: 'tel' },
-    { id: 'company', label: 'Company', inputType: 'text' },
-    { id: 'address', label: 'Address', inputType: 'text' },
-    { id: 'status', label: 'Status', inputType: 'toggle' },
-]);
 </script>
-
 
 <template>
     <Head title="Dashboard" />
@@ -45,58 +45,132 @@ const formFields = ref([
             <div class="card">
                 <Form
                     class="grid gap-4"
-                    :action="ClientController.store()"
+                    :action="ProjectController.store()"
                     #default="{ errors }"
                 >
-                    <div
-                        v-for="formField in formFields"
-                        :key="formField.id"
-                        class="flex flex-col gap-1"
-                    >
-                        <div v-if="formField.inputType === 'toggle'">
-                            <div class="flex flex-col gap-1">
-                                <label
-                                    for="status"
-                                    class="block text-sm/6 font-medium text-gray-900"
-                                    >Status</label
-                                >
-                                <input
-                                    type="hidden"
-                                    name="status"
-                                    :value="isActive ? 'active' : 'inactive'"
-                                />
-                                <div class="flex items-center gap-1">
-                                    <ToggleSwitch v-model="isActive" />
-                                    <span>{{
-                                        isActive ? 'active' : 'inactive'
-                                    }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <div class="flex flex-col gap-1">
-                                <label
-                                    :for="formField.id"
-                                    class="block text-sm/6 font-medium text-gray-900"
-                                    >{{ formField.label }}</label
-                                >
-                                <input
-                                    :id="formField.id"
-                                    :type="formField.inputType"
-                                    :name="formField.id"
-                                    class="border p-1"
-                                    :class="{
-                                        'border-red-500': errors[formField.id],
-                                    }"
-                                />
-                                <p class="text-xs text-red-500 italic">
-                                    {{ errors[formField.id] }}
-                                </p>
-                            </div>
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="title"
+                            class="block text-sm/6 font-medium text-gray-900"
+                        >
+                            Title
+                        </label>
+                        <input
+                            id="title"
+                            type="text"
+                            name="title"
+                            class="border p-1"
+                            :class="{
+                                'border-red-500': errors['title'],
+                            }"
+                        />
+                        <p class="text-xs text-red-500 italic">
+                            {{ errors['title'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="description"
+                            class="block text-sm/6 font-medium text-gray-900"
+                        >
+                            Description
+                        </label>
+                        <input
+                            id="description"
+                            type="text"
+                            name="description"
+                            class="border p-1"
+                            :class="{
+                                'border-red-500': errors['description'],
+                            }"
+                        />
+                        <p class="text-xs text-red-500 italic">
+                            {{ errors['description'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="client"
+                            class="block text-sm/6 font-medium text-gray-900"
+                        >
+                            Client
+                        </label>
+                        <input
+                            id="client"
+                            type="text"
+                            name="client"
+                            class="border p-1"
+                            :class="{
+                                'border-red-500': errors['client'],
+                            }"
+                        />
+                        <p class="text-xs text-red-500 italic">
+                            {{ errors['client'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="user"
+                            class="block text-sm/6 font-medium text-gray-900"
+                        >
+                            User
+                        </label>
+                        <input
+                            id="user"
+                            type="text"
+                            name="user"
+                            class="border p-1"
+                            :class="{
+                                'border-red-500': errors['user'],
+                            }"
+                        />
+                        <p class="text-xs text-red-500 italic">
+                            {{ errors['user'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="deadline"
+                            class="block text-sm/6 font-medium text-gray-900"
+                        >
+                            Deadline
+                        </label>
+                        <input
+                            id="deadline"
+                            type="date"
+                            name="deadline"
+                            class="border p-1"
+                            :class="{
+                                'border-red-500': errors['deadline'],
+                            }"
+                        />
+                        <p class="text-xs text-red-500 italic">
+                            {{ errors['deadline'] }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label
+                            for="status"
+                            class="block text-sm/6 font-medium text-gray-900"
+                            >Status</label
+                        >
+                        <input
+                            type="hidden"
+                            name="status"
+                            :value="isActive ? 'active' : 'inactive'"
+                        />
+                        <div class="flex items-center gap-1">
+                            <ToggleSwitch v-model="isActive" />
+                            <span>{{ isActive ? 'active' : 'inactive' }}</span>
                         </div>
                     </div>
 
-                    <Button type="submit">Create User</Button>
+                    <Button type="submit">Create Project</Button>
                 </Form>
             </div>
         </div>
