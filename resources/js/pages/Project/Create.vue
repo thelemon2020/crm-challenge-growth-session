@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, Client, ProjectStatus, User } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,6 +32,10 @@ interface ProjectCreateProps {
 }
 
 defineProps<ProjectCreateProps>();
+
+const currentDate = computed(() => {
+    return new Date().toISOString().split('T')[0];
+})
 </script>
 
 <template>
@@ -156,6 +161,7 @@ defineProps<ProjectCreateProps>();
                             id="deadline"
                             type="date"
                             name="deadline"
+                            :min="currentDate"
                             class="bg-neutral-secondary-medium border-default-medium text-heading rounded-base focus:ring-brand focus:border-brand placeholder:text-body block w-full border px-3 py-2.5 text-sm shadow-xs"
                             :class="{
                                 'border-red-500': errors['deadline'],

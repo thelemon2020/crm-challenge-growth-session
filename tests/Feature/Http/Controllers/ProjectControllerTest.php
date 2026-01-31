@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Carbon;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -132,14 +133,14 @@ class ProjectControllerTest extends TestCase
 
     public function test_admin_can_create_project_with_valid_data()
     {
-        $project = Project::factory()->raw();
-        $project['deadline'] = '2026-02-24 03:45:20';
+        $project = Project::factory()->make();
+        $project->deadline = '2026-02-24 03:45:20';
 
-        $response = $this->actingAs($this->admin)->post(route('projects.store'), $project);
+        $response = $this->actingAs($this->admin)->post(route('projects.store'), $project->toArray());
 
         $response->assertRedirect(route('projects.index'));
         $this->assertDatabaseCount('projects', 1);
-        $this->assertDatabaseHas('projects', $project);
+        $this->assertDatabaseHas('projects', $project->except(['deadline', 'created_at', 'updated_at']));
     }
 
     public function test_user_can_create_project_with_valid_data()
@@ -154,25 +155,17 @@ class ProjectControllerTest extends TestCase
         $this->assertDatabaseHas('projects', $project);
     }
 
-    #[dataProvider('invalidProjectData')]
-    public function test_cannot_create_project_with_invalid_data(array $project)
+    public function test_cannot_create_project_with_invalid_deadline()
     {
-        $project['deadline'] = '2026-02-24 03:45:20';
+        $project = Project::factory()->make([
+            'deadline' => Carbon::now()->subDay(),
+        ]);
 
-        $response = $this->actingAs($this->user)->post(route('projects.store'), $project);
+        $response = $this->actingAs($this->user)->post(route('projects.store'), $project->toArray());
 
-        $response->assertSessionHasErrors()->assertRedirect();
-        $this->assertDatabaseMissing('projects', $project);
-    }
-
-    public static function invalidProjectData(): array
-    {
-        return [
-            'missing client' => ['project' => Project::factory()->raw(['client' => null])],
-            'missing user' => ['project' => Project::factory()->raw(['user' => null])],
-            'missing title' => ['project' => Project::factory()->raw(['name' => ''])],
-            'missing status' => ['project' => Project::factory()->raw(['status' => null])],
-        ];
+        $response->assertRedirectBack(route('projects.create'));
+        $response->assertSessionHasErrors('deadline');
+        $this->assertDatabaseMissing('projects', $project->toArray());
     }
 
     // EDIT

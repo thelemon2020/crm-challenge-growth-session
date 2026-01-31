@@ -16,7 +16,7 @@ class CreateProjectRequest extends FormRequest
             'title' => ['required', 'string'],
             'description' => ['nullable', 'string'],
             'status' => ['required', Rule::enum(ProjectStatusEnum::class)],
-            'deadline' => ['nullable', 'date'],
+            'deadline' => ['nullable', 'date', Rule::date()->afterOrEqual(today())],
         ];
     }
 
