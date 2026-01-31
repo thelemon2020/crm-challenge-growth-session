@@ -2,9 +2,8 @@
 import ProjectController from '@/actions/App/Http/Controllers/ProjectController';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import type { BreadcrumbItem, Client, User } from '@/types';
+import type { BreadcrumbItem, Client, ProjectStatus, User } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,15 +20,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-enum ProjectStatus {
-    Pending = 'pending',
-    InProgress = 'in_progress',
-    OnHold = 'on_hold',
-    Review = 'review',
-    Completed = 'completed',
-    Cancelled = 'cancelled',
-}
-
 interface ProjectCreateProps {
     users: {
         data: User[];
@@ -37,10 +27,10 @@ interface ProjectCreateProps {
     clients: {
         data: Client[];
     };
-    status: ProjectStatus;
+    projectStatuses: ProjectStatus[];
 }
 
-const props = defineProps<ProjectCreateProps>();
+defineProps<ProjectCreateProps>();
 </script>
 
 <template>
@@ -192,11 +182,11 @@ const props = defineProps<ProjectCreateProps>();
                         >
                             <option selected>Choose a status</option>
                             <option
-                                v-for="stat in status"
-                                :key="stat"
-                                :value="stat"
+                                v-for="projectStatus in projectStatuses"
+                                :key="projectStatus.value"
+                                :value="projectStatus.value"
                             >
-                                {{ stat }}
+                                {{ projectStatus.label }}
                             </option>
                         </select>
                         <p class="text-xs text-red-500 italic">

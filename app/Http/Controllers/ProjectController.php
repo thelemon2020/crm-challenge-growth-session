@@ -36,11 +36,17 @@ class ProjectController extends Controller
 
         $users = UserResource::collection(User::all());
         $clients = $isAdmin ? ClientResource::collection(Client::all()) : ClientResource::collection(Client::where('user_id', auth()->id())->get());
+        $projectStatuses = collect(ProjectStatusEnum::cases())->map(function ($enum) {
+            return [
+                'label' => $enum->name,
+                'value' => $enum->value,
+            ];
+        });
 
         return Inertia::render('Project/Create', [
             'users' => $users,
             'clients' => $clients,
-            'status' => ProjectStatusEnum::cases()
+            'projectStatuses' => $projectStatuses
         ]);
     }
 

@@ -48,3 +48,8 @@ export interface Client {
     status: 'active' | 'inactive';
 }
 
+export interface ProjectStatus {
+    label: string;
+    value: string;
+}
+

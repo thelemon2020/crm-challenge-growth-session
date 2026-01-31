@@ -216,7 +216,6 @@ class ProjectControllerTest extends TestCase
         );
 
         $response = $this->actingAs($this->user)->get(route('projects.edit', $otherPersonProject));
-
         $response->assertForbidden();
     }
 
