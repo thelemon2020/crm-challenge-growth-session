@@ -133,18 +133,6 @@ class ClientControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_user_cannot_create_client_without_permission()
-    {
-        // Arrange
-        $client = Client::factory()->raw(["status" => ClientStatusEnum::Inactive->value]);
-
-        // Act
-        $response = $this->actingAs($this->user)->post(route('clients.store'), $client);
-
-        // Assert
-        $response->assertForbidden();
-    }
-
     public function test_admin_can_create_client_with_valid_data()
     {
         // Arrange

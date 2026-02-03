@@ -20,6 +20,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface ClientIndexProps {
+    can: {
+        manage_clients: boolean
+    },
     clients: {
         data: Client[];
     };
@@ -134,6 +137,7 @@ function deleteClient(id: number) {
                                     raised
                                 />
                                 <Button
+                                    v-if="can.manage_clients"
                                     type="submit"
                                     label="Delete"
                                     size="small"

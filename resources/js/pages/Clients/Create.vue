@@ -41,7 +41,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="name"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Name
                         </label>
@@ -62,7 +62,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="email"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Email
                         </label>
@@ -83,7 +83,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="phone"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Phone
                         </label>
@@ -104,7 +104,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="company"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Company
                         </label>
@@ -125,7 +125,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="address"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Address
                         </label>
@@ -146,7 +146,7 @@ const isActive = ref(false);
                     <div class="flex flex-col gap-1">
                         <label
                             for="status"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >Status</label
                         >
                         <input

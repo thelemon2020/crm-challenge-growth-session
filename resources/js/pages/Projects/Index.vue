@@ -18,14 +18,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface ProjectIndexProps {
+    can: {
+      delete_project: boolean
+    },
     projects: {
         data: any[];
     };
 }
 
-defineProps<ProjectIndexProps>();
-
 const confirm = useConfirm();
+
+defineProps<ProjectIndexProps>();
 
 function deleteProject(id: number) {
     confirm.require({
@@ -111,6 +114,7 @@ function deleteProject(id: number) {
                                     raised
                                 />
                                 <Button
+                                    v-if="can.delete_project"
                                     label="Delete"
                                     size="small"
                                     severity="secondary"

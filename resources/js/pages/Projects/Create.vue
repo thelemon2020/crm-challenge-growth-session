@@ -16,25 +16,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: ProjectController.index().url,
     },
     {
-        title: 'Edit',
+        title: 'Create',
         href: '#',
     },
 ];
 
-interface Project {
-    id: number;
-    title: string;
-    description: string;
-    client: Client;
-    user: User;
-    deadline: string;
-    status: string;
-}
-
-interface ProjectEditProps {
-    project: {
-        data: Project;
-    };
+interface ProjectCreateProps {
     users: {
         data: User[];
     };
@@ -44,11 +31,11 @@ interface ProjectEditProps {
     projectStatuses: ProjectStatus[];
 }
 
-defineProps<ProjectEditProps>();
+defineProps<ProjectCreateProps>();
 
 const currentDate = computed(() => {
     return new Date().toISOString().split('T')[0];
-});
+})
 </script>
 
 <template>
@@ -61,13 +48,13 @@ const currentDate = computed(() => {
             <div class="card">
                 <Form
                     class="grid gap-4"
-                    :action="ProjectController.update(project.data.id)"
+                    :action="ProjectController.store()"
                     #default="{ errors }"
                 >
                     <div class="flex flex-col gap-1">
                         <label
                             for="title"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Title
                         </label>
@@ -75,7 +62,6 @@ const currentDate = computed(() => {
                             id="title"
                             type="text"
                             name="title"
-                            :value="project.data.title"
                             class="border p-1"
                             :class="{
                                 'border-red-500': errors['title'],
@@ -89,7 +75,7 @@ const currentDate = computed(() => {
                     <div class="flex flex-col gap-1">
                         <label
                             for="description"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Description
                         </label>
@@ -97,7 +83,6 @@ const currentDate = computed(() => {
                             id="description"
                             type="text"
                             name="description"
-                            :value="project.data.description"
                             class="border p-1"
                             :class="{
                                 'border-red-500': errors['description'],
@@ -111,7 +96,7 @@ const currentDate = computed(() => {
                     <div class="flex flex-col gap-1">
                         <label
                             for="client_id"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                             >Client</label
                         >
                         <select
@@ -122,12 +107,11 @@ const currentDate = computed(() => {
                                 'border-red-500': errors['client_id'],
                             }"
                         >
-                            <option>Choose a client</option>
+                            <option selected>Choose a client</option>
                             <option
                                 v-for="client in clients.data"
                                 :key="client.id"
                                 :value="client.id"
-                                :selected="client.id === project.data.client?.id"
                             >
                                 {{ client.name }}
                             </option>
@@ -140,7 +124,7 @@ const currentDate = computed(() => {
                     <div class="flex flex-col gap-1">
                         <label
                             for="user_id"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             User
                         </label>
@@ -152,12 +136,11 @@ const currentDate = computed(() => {
                                 'border-red-500': errors['user_id'],
                             }"
                         >
-                            <option>Choose a user</option>
+                            <option selected>Choose a user</option>
                             <option
                                 v-for="user in users.data"
                                 :key="user.id"
                                 :value="user.id"
-                                :selected="user.id === project.data.user?.id"
                             >
                                 {{ user.name }}
                             </option>
@@ -170,7 +153,7 @@ const currentDate = computed(() => {
                     <div class="flex flex-col gap-1">
                         <label
                             for="deadline"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                         >
                             Deadline
                         </label>
@@ -178,7 +161,6 @@ const currentDate = computed(() => {
                             id="deadline"
                             type="date"
                             name="deadline"
-                            :value="project.data.deadline"
                             :min="currentDate"
                             class="bg-neutral-secondary-medium border-default-medium text-heading rounded-base focus:ring-brand focus:border-brand placeholder:text-body block w-full border px-3 py-2.5 text-sm shadow-xs"
                             :class="{
@@ -193,7 +175,7 @@ const currentDate = computed(() => {
                     <div class="flex flex-col gap-1">
                         <label
                             for="status"
-                            class="block text-sm/6 font-medium text-gray-900"
+                            class="block text-sm/6 font-medium text-primary"
                             >Status</label
                         >
                         <select
@@ -204,12 +186,11 @@ const currentDate = computed(() => {
                                 'border-red-500': errors['status'],
                             }"
                         >
-                            <option>Choose a status</option>
+                            <option selected>Choose a status</option>
                             <option
                                 v-for="projectStatus in projectStatuses"
                                 :key="projectStatus.value"
                                 :value="projectStatus.value"
-                                :selected="projectStatus.value === project.data.status"
                             >
                                 {{ projectStatus.label }}
                             </option>
@@ -219,7 +200,7 @@ const currentDate = computed(() => {
                         </p>
                     </div>
 
-                    <Button type="submit">Update Project</Button>
+                    <Button type="submit">Create Project</Button>
                 </Form>
             </div>
         </div>

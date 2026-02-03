@@ -2,14 +2,10 @@
 
 namespace Feature\Http\Controllers;
 
-
-use App\Enums\ClientStatusEnum;
-use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Carbon;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -74,7 +70,7 @@ class ProjectControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeInOrder($projects->pluck('id')->toArray());
         $response->assertInertia(fn($page) => $page
-            ->component('Project/Index')
+            ->component('Projects/Index')
             ->has('projects.data', $projects->count())
         );
     }
@@ -91,7 +87,7 @@ class ProjectControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeInOrder($userProjects->pluck('id')->toArray());
         $response->assertInertia(fn($page) => $page
-            ->component('Project/Index')
+            ->component('Projects/Index')
             ->has('projects.data', $userProjects->count())
         );
     }
@@ -111,7 +107,7 @@ class ProjectControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertInertia(fn(Assert $page) => $page
-                ->component('Project/Create'));
+                ->component('Projects/Create'));
     }
 
     public function test_user_can_show_create_project_page()
@@ -120,7 +116,7 @@ class ProjectControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertInertia(fn(Assert $page) => $page
-                ->component('Project/Create'));
+                ->component('Projects/Create'));
     }
 
     // STORE
@@ -188,7 +184,7 @@ class ProjectControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(fn($page) => $page
-            ->component('Project/Edit')
+            ->component('Projects/Edit')
             ->has('project.data', fn(Assert $page) => $page->where('id', $project->id)->etc())
         );
     }
@@ -204,7 +200,7 @@ class ProjectControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(fn($page) => $page
-            ->component('Project/Edit')
+            ->component('Projects/Edit')
             ->has('project.data', fn(Assert $page) => $page->where('id', $personalProject->id)->etc())
         );
 
@@ -213,8 +209,91 @@ class ProjectControllerTest extends TestCase
     }
 
     // UPDATE
+    public function test_update_projects_requires_authentication()
+    {
+        // Arrange
+        $projects = Project::factory()->count(3)->create();
+
+        // Act
+        $response = $this->put(route('projects.update', $projects[0]));
+
+        // Assert
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_user_can_update_his_own_project()
+    {
+        // Arrange
+        $userProjects = Project::factory()->count(3)->for($this->user)->create();
+        $othersProjects = Project::factory()->count(3)->create();
+        $updatedProject = Project::factory()->raw([
+            'title' => 'updated project'
+        ]);
+
+        // Act
+        $response = $this->actingAs($this->user)->put(route('projects.update', $userProjects->first()), $updatedProject);
+
+        // Assert
+        $response->assertRedirect(route('projects.index'));
+        $this->assertDatabaseHas('projects', [...$updatedProject, 'id' => $userProjects->first()->id]);
+
+        $response = $this->actingAs($this->user)->put(route('projects.update', $othersProjects->first()), $updatedProject);
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_update_other_people_project()
+    {
+        // Arrange
+        $userProjects = Project::factory()->count(3)->for($this->user)->create();
+        $updatedProject = Project::factory()->raw([
+            'title' => 'updated project'
+        ]);
+
+        // Act
+        $response = $this->actingAs($this->admin)->put(route('projects.update', $userProjects->first()), $updatedProject);
+
+        // Assert
+        $response->assertRedirect(route('projects.index'));
+        $this->assertDatabaseHas('projects', [...$updatedProject, 'id' => $userProjects->first()->id]);
+    }
 
 
     // DESTROY
+    public function test_delete_projects_requires_authentication()
+    {
+        // Arrange
+        $projects = Project::factory()->count(3)->create();
 
+        // Act
+        $response = $this->delete(route('projects.destroy', $projects->first()));
+
+        // Assert
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_user_cannot_delete_project()
+    {
+        // Arrange
+        [$otherPeopleProject, , ] = Project::factory()->count(3)->create();
+
+        // Act
+        $response = $this->actingAs($this->user)->delete(route('projects.destroy', $otherPeopleProject));
+
+        // Assert
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_delete_project()
+    {
+        // Arrange
+        [$otherPeopleProject, , ] = Project::factory()->count(3)->create();
+
+        // Act
+        $response = $this->actingAs($this->admin)->delete(route('projects.destroy', $otherPeopleProject));
+
+        $response->assertRedirect(route('projects.index'));
+        $this->assertDatabaseMissing('projects', $otherPeopleProject->toArray());
+    }
+
+    // test('can upload media to project')
 }

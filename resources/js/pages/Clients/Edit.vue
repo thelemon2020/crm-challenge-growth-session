@@ -94,7 +94,7 @@ const formFields = ref([
                             <div class="flex flex-col gap-1">
                                 <label
                                     for="status"
-                                    class="block text-sm/6 font-medium text-gray-900"
+                                    class="block text-sm/6 font-medium text-primary"
                                     >Status</label
                                 >
                                 <input
@@ -114,7 +114,7 @@ const formFields = ref([
                             <div class="flex flex-col gap-1">
                                 <label
                                     :for="formField.id"
-                                    class="block text-sm/6 font-medium text-gray-900"
+                                    class="block text-sm/6 font-medium text-primary"
                                     >{{ formField.label }}</label
                                 >
                                 <input

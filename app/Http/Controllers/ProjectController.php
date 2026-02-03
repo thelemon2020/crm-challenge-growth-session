@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProjectStatusEnum;
 use App\Http\Requests\CreateProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
@@ -25,7 +26,10 @@ class ProjectController extends Controller
             $projects = Project::with(['client', 'user'])->where('user_id', auth()->id())->get();
         }
 
-        return Inertia::render('Project/Index', [
+        return Inertia::render('Projects/Index', [
+            'can' => [
+                'delete_project' => auth()->user()->can('manage projects')
+            ],
             'projects' => ProjectResource::collection($projects)
         ]);
     }
@@ -43,7 +47,7 @@ class ProjectController extends Controller
             ];
         });
 
-        return Inertia::render('Project/Create', [
+        return Inertia::render('Projects/Create', [
             'users' => $users,
             'clients' => $clients,
             'projectStatuses' => $projectStatuses
@@ -64,14 +68,8 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        if (auth()->user()->cannot('manage projects') && $project->user->id !== auth()->id()) {
-            abort(403);
-        }
-
-        $isAdmin = auth()->user()->can('manage projects');
-
         $users = UserResource::collection(User::all());
-        $clients = $isAdmin ? ClientResource::collection(Client::all()) : ClientResource::collection(Client::where('user_id', auth()->id())->get());
+        $clients = ClientResource::collection(Client::all());
         $projectStatuses = collect(ProjectStatusEnum::cases())->map(function ($enum) {
             return [
                 'label' => $enum->name,
@@ -79,7 +77,7 @@ class ProjectController extends Controller
             ];
         });
 
-        return Inertia::render('Project/Edit', [
+        return Inertia::render('Projects/Edit', [
             'project' => new ProjectResource($project),
             'users' => $users,
             'clients' => $clients,
@@ -87,19 +85,19 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(Request $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        $data = $request->validate([
+        $project->update($request->validated());
 
-        ]);
-
-        $project->update($data);
-
-        return $project;
+        return redirect()->route('projects.index')->with('success', 'Project updated successfully.');
     }
 
     public function destroy(Project $project)
     {
+        if (auth()->user()->cannot('manage projects')) {
+            abort(403);
+        }
+
         $project->delete();
 
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');

@@ -12,22 +12,26 @@ class ClientController extends Controller
 {
     public function index()
     {
+        $canManageClients = auth()->user()->can('manage clients');
+
         $clients = Client::all();
 
-        return Inertia::render('Client/Index', [
+        return Inertia::render('Clients/Index', [
+            'can' => [
+                'manage_clients' => $canManageClients,
+            ],
             'clients' => ClientResource::collection($clients)
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Client/Create');
+        return Inertia::render('Clients/Create');
     }
 
     public function store(CreateClientRequest $request)
     {
-        $data = $request->validated();
-        Client::create($data);
+        Client::create($request->validated());
 
         return redirect()->route('clients.index')
             ->with('success', 'Client created!');
@@ -35,7 +39,7 @@ class ClientController extends Controller
 
     public function edit(Client $client)
     {
-        return Inertia::render('Client/Edit', [
+        return Inertia::render('Clients/Edit', [
             'client' => new ClientResource($client)
         ]);
     }

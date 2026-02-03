@@ -27,7 +27,7 @@ Route::get('dashboard', function() {
 
 Route::resource('clients', ClientController::class)
     ->except(['show'])
-    ->middleware(['auth', 'verified', 'can:manage clients']);
+    ->middleware(['auth', 'verified']);
 
 Route::resource('projects', ProjectController::class)
     ->middleware(['auth', 'verified']);

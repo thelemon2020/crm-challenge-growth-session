@@ -56,14 +56,14 @@ test('soft deleted clients are not in default queries')
 ```
 
 ### AC 2.3: Project Model
-- [ ] Projects table: `name`, `description`, `client_id`, `user_id` (assigned to), `status` (planning/in_progress/completed/on_hold), `start_date`, `deadline`, `deleted_at`, timestamps
-- [ ] Project model uses `SoftDeletes`
-- [ ] Project `belongsTo` Client
-- [ ] Project `belongsTo` User (assigned user)
-- [ ] Project `hasMany` Tasks
-- [ ] Project `morphMany` Media (Spatie)
+- [X] Projects table: `name`, `description`, `client_id`, `user_id` (assigned to), `status` (planning/in_progress/completed/on_hold), `start_date`, `deadline`, `deleted_at`, timestamps
+- [?] Project model uses `SoftDeletes`
+- [X] Project `belongsTo` Client
+- [X] Project `belongsTo` User (assigned user)
+- [?] Project `hasMany` Tasks
+- [?] Project `morphMany` Media (Spatie)
 - [ ] Date accessors for `start_date` and `deadline` in m/d/Y format
-- [ ] Status scope: `scopeInProgress($query)`
+- [?] Status scope: `scopeInProgress($query)`
 
 **Tests**:
 ```php
@@ -114,12 +114,12 @@ test('unauthenticated requests return 401')
 ```
 
 ### AC 3.2: Login & Registration
-- [ ] POST `/login` endpoint accepts email/password, returns user data
-- [ ] POST `/register` endpoint creates user, sends verification email
-- [ ] POST `/logout` endpoint destroys session
-- [ ] GET `/user` endpoint returns authenticated user
-- [ ] Login attempts rate limited (5 per minute)
-- [ ] Validation errors return 422 with proper structure
+- [X] POST `/login` endpoint accepts email/password, returns user data
+- [X] POST `/register` endpoint creates user, sends verification email
+- [X] POST `/logout` endpoint destroys session
+- [X] GET `/user` endpoint returns authenticated user
+- [X] Login attempts rate limited (5 per minute)
+- [X] Validation errors return 422 with proper structure
 
 **Tests**:
 ```php
@@ -131,7 +131,7 @@ test('authenticated user can fetch their data')
 test('login is rate limited after 5 attempts')
 ```
 
-### AC 3.3: Email Verification
+### AC 3.3: Email Verification (X)
 - [ ] Verification email sent on registration
 - [ ] GET `/email/verify/{id}/{hash}` verifies email
 - [ ] POST `/email/verification-notification` resends verification
@@ -163,9 +163,9 @@ test('user cannot access admin routes')
 test('permissions are checked on API endpoints')
 ```
 
-### AC 3.5: Gates & Policies
-- [ ] ClientPolicy: `viewAny`, `view`, `create`, `update`, `delete`
-- [ ] ProjectPolicy: `viewAny`, `view`, `create`, `update`, `delete` (users can only view their assigned projects)
+### AC 3.5: Gates & Policies (using spatie is good enough)
+- [X] ClientPolicy: `viewAny`, `view`, `create`, `update`, `delete`
+- [X] ProjectPolicy: `viewAny`, `view`, `create`, `update`, `delete` (users can only view their assigned projects)
 - [ ] TaskPolicy: `viewAny`, `view`, `create`, `update`, `delete` (users can only view their assigned tasks)
 - [ ] Policies registered in `AuthServiceProvider`
 
@@ -191,8 +191,8 @@ test('policy denies access return 403')
 - [X] DELETE `/api/clients/{client}` - soft delete client
 - [] POST `/api/clients/{client}/media` - upload client documents
 - [X] All endpoints use route model binding
-- [ ] All endpoints return `ClientResource`
-- [ ] All endpoints check policies
+- [X] All endpoints return `ClientResource`
+- [X] All endpoints check policies
 
 **Tests**:
 ```php
@@ -208,13 +208,13 @@ test('api returns proper json structure')
 ```
 
 ### AC 4.2: Project API Endpoints
-- [ ] GET `/api/projects` - list projects (user sees only assigned, admin sees all)
-- [ ] GET `/api/projects/{project}` - show project with client, tasks, assigned user
-- [ ] POST `/api/projects` - create project
-- [ ] PUT `/api/projects/{project}` - update project
-- [ ] DELETE `/api/projects/{project}` - soft delete project
-- [ ] POST `/api/projects/{project}/media` - upload project files
-- [ ] All endpoints return `ProjectResource`
+- [X] GET `/api/projects` - list projects (user sees only assigned, admin sees all)
+- [X] GET `/api/projects/{project}` - show project with client, tasks, assigned user
+- [X] POST `/api/projects` - create project
+- [X] PUT `/api/projects/{project}` - update project
+- [X] DELETE `/api/projects/{project}` - soft delete project
+- [X] POST `/api/projects/{project}/media` - upload project files
+- [X] All endpoints return `ProjectResource`
 
 **Tests**:
 ```php
@@ -247,7 +247,7 @@ test('can soft delete task')
 test('can upload media to task')
 ```
 
-### AC 4.4: User Management API (Admin Only)
+### AC 4.4: User Management API (Admin Only) (X)
 - [ ] GET `/api/users` - list all users
 - [ ] GET `/api/users/{user}` - show user
 - [ ] POST `/api/users` - create user (admin only)
@@ -285,9 +285,9 @@ test('api handles database exceptions gracefully')
 ## 5. Database Seeders & Factories
 
 ### AC 5.1: Factories
-- [ ] UserFactory creates users with verified emails
-- [ ] ClientFactory creates clients with realistic data (Faker)
-- [ ] ProjectFactory creates projects with valid status and dates
+- [X] UserFactory creates users with verified emails
+- [X] ClientFactory creates clients with realistic data (Faker)
+- [X] ProjectFactory creates projects with valid status and dates
 - [ ] TaskFactory creates tasks with valid priority and status
 
 **Tests**:
@@ -299,14 +299,14 @@ test('task factory creates valid task with relationships')
 ```
 
 ### AC 5.2: Seeders
-- [ ] DatabaseSeeder runs all seeders
-- [ ] RolePermissionSeeder creates roles and permissions
-- [ ] UserSeeder creates:
+- [X] DatabaseSeeder runs all seeders
+- [X] RolePermissionSeeder creates roles and permissions
+- [X] UserSeeder creates:
     - Admin user: admin@example.com / password
     - Regular user: user@example.com / password
     - Both with verified emails and assigned roles
-- [ ] ClientSeeder creates 20 clients (15 active, 5 inactive)
-- [ ] ProjectSeeder creates 30 projects assigned to users
+- [X] ClientSeeder creates 20 clients (15 active, 5 inactive)
+- [X] ProjectSeeder creates 30 projects assigned to users
 - [ ] TaskSeeder creates 50 tasks across projects
 
 **Tests**:
