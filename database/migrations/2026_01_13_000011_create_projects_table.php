@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('status')->default(ProjectStatusEnum::Pending->value);
+            $table->string('file')->nullable();
             $table->date('deadline')->nullable();
             $table->timestamps();
         });

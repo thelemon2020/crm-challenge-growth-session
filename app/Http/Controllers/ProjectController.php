@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -57,6 +58,8 @@ class ProjectController extends Controller
     public function store(CreateProjectRequest $request)
     {
         Project::create($request->validated());
+
+        Storage::disk('public')->putFileAs('', $request->file('file'), $request->file('file')->getClientOriginalName());
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
