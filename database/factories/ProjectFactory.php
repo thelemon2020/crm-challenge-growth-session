@@ -7,7 +7,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
+use Illuminate\Http\UploadedFile;
 
 class ProjectFactory extends Factory
 {
@@ -22,8 +22,7 @@ class ProjectFactory extends Factory
             'description' => $this->faker->text(),
             'status' => ProjectStatusEnum::Pending->value,
             'deadline' => $this->faker->dateTimeBetween('+1 week', '+1 month')->format('Y-m-d'),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'file' => UploadedFile::fake()->image($this->faker->word . '.jpg')
         ];
     }
 }
