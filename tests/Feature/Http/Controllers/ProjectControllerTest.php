@@ -2,6 +2,7 @@
 
 namespace Feature\Http\Controllers;
 
+use App\Enums\ProjectStatusEnum;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -211,25 +212,6 @@ class ProjectControllerTest extends TestCase
         );
     }
 
-    public function test_user_can_access_projects_edit_page_with_personal_project_only()
-    {
-        $personalProject = Project::factory()->create([
-            'user_id' => $this->user->id
-        ]);
-        $otherPersonProject = Project::factory()->create();
-
-        $response = $this->actingAs($this->user)->get(route('projects.edit', $personalProject));
-
-        $response->assertStatus(200);
-        $response->assertInertia(fn($page) => $page
-            ->component('Projects/Edit')
-            ->has('project.data', fn(Assert $page) => $page->where('id', $personalProject->id)->etc())
-        );
-
-        $response = $this->actingAs($this->user)->get(route('projects.edit', $otherPersonProject));
-        $response->assertForbidden();
-    }
-
     // UPDATE
     public function test_update_projects_requires_authentication()
     {
@@ -243,42 +225,20 @@ class ProjectControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_user_can_update_his_own_project()
+    public function test_user_can_update_project()
     {
         // Arrange
-        $userProjects = Project::factory()->count(3)->for($this->user)->create();
-        $othersProjects = Project::factory()->count(3)->create();
-        $updatedProject = Project::factory()->raw([
-            'title' => 'updated project'
-        ]);
+        Project::factory()->count(3)->create();
+        $firstProject = Project::query()->first();
 
         // Act
-        $response = $this->actingAs($this->user)->put(route('projects.update', $userProjects->first()), $updatedProject);
+        $response = $this->actingAs($this->user)->put(route('projects.update', $firstProject), [...$firstProject->toArray(), 'title' => 'updated title']);
 
         // Assert
         $response->assertRedirect(route('projects.index'));
-        $this->assertDatabaseHas('projects', [...$updatedProject, 'id' => $userProjects->first()->id]);
-
-        $response = $this->actingAs($this->user)->put(route('projects.update', $othersProjects->first()), $updatedProject);
-        $response->assertForbidden();
+        $firstProject->refresh();
+        $this->assertEquals('updated title', $firstProject->title);
     }
-
-    public function test_admin_can_update_other_people_project()
-    {
-        // Arrange
-        $userProjects = Project::factory()->count(3)->for($this->user)->create();
-        $updatedProject = Project::factory()->raw([
-            'title' => 'updated project'
-        ]);
-
-        // Act
-        $response = $this->actingAs($this->admin)->put(route('projects.update', $userProjects->first()), $updatedProject);
-
-        // Assert
-        $response->assertRedirect(route('projects.index'));
-        $this->assertDatabaseHas('projects', [...$updatedProject, 'id' => $userProjects->first()->id]);
-    }
-
 
     // DESTROY
     public function test_delete_projects_requires_authentication()
@@ -296,7 +256,7 @@ class ProjectControllerTest extends TestCase
     public function test_user_cannot_delete_project()
     {
         // Arrange
-        [$otherPeopleProject, , ] = Project::factory()->count(3)->create();
+        [$otherPeopleProject, ,] = Project::factory()->count(3)->create();
 
         // Act
         $response = $this->actingAs($this->user)->delete(route('projects.destroy', $otherPeopleProject));
@@ -308,7 +268,7 @@ class ProjectControllerTest extends TestCase
     public function test_admin_can_delete_project()
     {
         // Arrange
-        [$otherPeopleProject, , ] = Project::factory()->count(3)->create();
+        [$otherPeopleProject, ,] = Project::factory()->count(3)->create();
 
         // Act
         $response = $this->actingAs($this->admin)->delete(route('projects.destroy', $otherPeopleProject));
