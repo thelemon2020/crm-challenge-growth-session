@@ -57,9 +57,13 @@ class ProjectController extends Controller
 
     public function store(CreateProjectRequest $request)
     {
-        Project::create($request->validated());
+        $validated = $request->validated();
 
-        Storage::disk('public')->putFileAs('', $request->file('file'), $request->file('file')->getClientOriginalName());
+        $validated['file'] = $request->file('file')->getClientOriginalName();
+
+        Project::create($validated);
+
+        Storage::disk('local')->put($request->file('file')->getClientOriginalName(), $request->file('file'));
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
