@@ -200,27 +200,6 @@ const currentDate = computed(() => {
                         </p>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label
-                            for="file"
-                            class="block text-sm/6 font-medium text-primary"
-                        >
-                            Upload a file
-                        </label>
-                        <input
-                            id="file"
-                            type="file"
-                            name="file"
-                            class="bg-neutral-secondary-medium border-default-medium text-heading rounded-base focus:ring-brand focus:border-brand placeholder:text-body block w-full border px-3 py-2.5 text-sm shadow-xs"
-                            :class="{
-                                'border-red-500': errors['file'],
-                            }"
-                        />
-                        <p class="text-xs text-red-500 italic">
-                            {{ errors['file'] }}
-                        </p>
-                    </div>
-
                     <Button type="submit">Create Project</Button>
                 </Form>
             </div>
