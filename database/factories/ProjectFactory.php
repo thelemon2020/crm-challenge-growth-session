@@ -22,7 +22,6 @@ class ProjectFactory extends Factory
             'description' => $this->faker->text(),
             'status' => ProjectStatusEnum::Pending->value,
             'deadline' => $this->faker->dateTimeBetween('+1 week', '+1 month')->format('Y-m-d'),
-            'file' => UploadedFile::fake()->image($this->faker->word . '.jpg')
         ];
     }
 }

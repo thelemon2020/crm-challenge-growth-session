@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -59,11 +60,7 @@ class ProjectController extends Controller
     {
         $validated = $request->validated();
 
-        $validated['file'] = $request->file('file')->getClientOriginalName();
-
         Project::create($validated);
-
-        Storage::disk('local')->put($request->file('file')->getClientOriginalName(), $request->file('file'));
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
@@ -94,7 +91,24 @@ class ProjectController extends Controller
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($request->validated());
+        $project->update($request->safe()->except(['file']));
+
+        $isStored = Storage::disk('local')
+            ->put($request->file('file')->getClientOriginalName(), $request->file('file'));
+
+        if (! $isStored) {
+            Log::error('File could not be stored.', [
+                'file' => $request->file('file')->getClientOriginalName()
+            ]);
+        }
+
+        $project->files()->create([
+            'disk' => 'local',
+            'path' => 'temp/' . $request->file('file')->path(),
+            'original_name' => $request->file('file')->getClientOriginalName(),
+            'mime_type' => $request->file('file')->getMimeType(),
+            'size' => $request->file('file')->getSize(),
+        ]);
 
         return redirect()->route('projects.index')->with('success', 'Project updated successfully.');
     }

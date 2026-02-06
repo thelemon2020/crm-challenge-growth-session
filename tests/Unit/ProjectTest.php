@@ -19,7 +19,7 @@ class ProjectTest extends TestCase
         test('project can have media attachments')
         test('date accessors return formatted dates')
         test('in_progress scope filters correctly')
-    * */
+    */
 
     // we can upload many files to either a project or a task
 
