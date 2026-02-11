@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -23,9 +24,9 @@ class ProjectController extends Controller
         $projects = null;
 
         if (auth()->user()->can('manage projects')) {
-            $projects = Project::with(['client', 'user'])->get();
+            $projects = Project::with(['client', 'user'])->latest()->get();
         } else if (auth()->user()->can('view own projects')) {
-            $projects = Project::with(['client', 'user'])->where('user_id', auth()->id())->get();
+            $projects = Project::with(['client', 'user'])->where('user_id', auth()->id())->latest()->get();
         }
 
         return Inertia::render('Projects/Index', [
@@ -93,22 +94,9 @@ class ProjectController extends Controller
     {
         $project->update($request->safe()->except(['file']));
 
-        $isStored = Storage::disk('local')
-            ->put($request->file('file')->getClientOriginalName(), $request->file('file'));
-
-        if (! $isStored) {
-            Log::error('File could not be stored.', [
-                'file' => $request->file('file')->getClientOriginalName()
-            ]);
+        if ($request->file('file')) {
+           $this->storeFile($request->file('file'), $project);
         }
-
-        $project->files()->create([
-            'disk' => 'local',
-            'path' => 'temp/' . $request->file('file')->path(),
-            'original_name' => $request->file('file')->getClientOriginalName(),
-            'mime_type' => $request->file('file')->getMimeType(),
-            'size' => $request->file('file')->getSize(),
-        ]);
 
         return redirect()->route('projects.index')->with('success', 'Project updated successfully.');
     }
@@ -122,5 +110,25 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    private function storeFile(UploadedFile $file, Project $project)
+    {
+        $isStored = Storage::disk('local')
+            ->put($file->getClientOriginalName(), $file);
+
+        if (! $isStored) {
+            Log::error('File could not be stored.', [
+                'file' => $file->getClientOriginalName()
+            ]);
+        }
+
+        $project->files()->create([
+            'disk' => 'local',
+            'path' => 'temp/' . $file->path(),
+            'original_name' => $file->getClientOriginalName(),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+        ]);
     }
 }
