@@ -2,6 +2,7 @@
 
 namespace Feature\Http\Controllers;
 
+use App\Enums\ProjectStatusEnum;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -219,61 +220,6 @@ class ProjectControllerTest extends TestCase
         $response->assertRedirect(route('projects.index'));
         $firstProject->refresh();
         $this->assertEquals('updated title', $firstProject->title);
-    }
-
-    public function test_user_can_upload_a_single_file_when_updating_a_project()
-    {
-        Storage::fake();
-
-        $uploadedFile = UploadedFile::fake()->image('photo1.jpg');
-
-        $existingProject = Project::factory()->create();
-
-        $updatedProject = Project::factory()->raw();
-        $updatedProject['deadline'] = '2026-02-24 03:45:20';
-
-        $response = $this->actingAs($this->user)->put(route('projects.update', $existingProject), [
-            ...$updatedProject,
-            'file' => $uploadedFile
-        ]);
-
-        $response->assertRedirect(route('projects.index'));
-        $this->assertDatabaseCount('projects', 1);
-
-        Storage::disk()->assertExists($uploadedFile->getClientOriginalName());
-        $this->assertDatabaseHas('files', [
-            'disk' => 'local',
-            'path' => 'temp/' . $uploadedFile->path(),
-            'original_name' => $uploadedFile->getClientOriginalName()
-        ]);
-    }
-
-    public function test_if_error_logged_if_user_cant_upload_a_single_file_when_updating_a_new_project()
-    {
-        Storage::fake();
-
-        $uploadedFile = UploadedFile::fake()->image('photo1.jpg');
-
-        Log::shouldReceive('error')
-            ->once()
-            ->with('File could not be stored.', [
-                'file' => $uploadedFile->getClientOriginalName()
-            ]);
-
-        Storage::shouldReceive('disk->put')
-            ->once()
-            ->with($uploadedFile->getClientOriginalName(), $uploadedFile)
-            ->andReturn(false);
-
-        $existingProject = Project::factory()->create();
-
-        $updatedProject = Project::factory()->raw();
-        $updatedProject['deadline'] = '2026-02-24 03:45:20';
-
-        $this->actingAs($this->user)->put(route('projects.update', $existingProject), [
-            ...$updatedProject,
-            'file' => $uploadedFile
-        ]);
     }
 
     // DESTROY

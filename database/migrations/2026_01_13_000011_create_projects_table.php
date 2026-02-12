@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Client::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->nullable()->constrained();
+            $table->foreignIdFor(User::class)->constrained();
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('status')->default(ProjectStatusEnum::Pending->value);
